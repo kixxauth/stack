@@ -32,20 +32,10 @@ Each handler needs to be of the form:
       // any exceptions need to be caught and forwarded to `next(err)`
     }
 
-When using external modules a good convention is to make the module be a callable setup function that returns the handler function.  The first example uses modules created after this pattern.
-
-    module.exports = function setup(some, args) {
-      // Do server set up stuff here
-      return function handle(req, res, next) {
-        // Handle a single request here
-      };
-    };
-
 ## What Stack Does
 
 Besides providing this nice linear syntax for defining http handler layers Stack does a few things under the hood.
 
- - Wraps each layer in a `try..catch` to catch any exceptions that happen in the main execution stack layer's handler function.
  - Provides a fallthrough error handler function that returns 404 for routes that fall through all the layers and 500 responses for exceptions.
    (You can override this at Stack.errorHandler, if for example, you don't like showing stack traces for all errors or want to pretty it up a bit)
  - Forwards and exceptions passed to any next layer directly to the error handler.  This means layers don't have to worry about errors from previous layers.
